@@ -1,6 +1,17 @@
 <!DOCTYPE HTML>
 <html>
-  <body>
-    <h1>Hi!</h1>
-  </body>
+    <body>
+        <button onClick="launch()">Launch</button>
+        <select id="version">
+            <option id="rd-132211">rd-132211</option>
+        </select>
+        <input type="checkbox" checked id="wasm">
+        <script>
+            var launch = function(){
+                if(document.getElementById("wasm").checked){
+                    window.open("rd-132211-WASM.html", '_blank').focus();
+                }
+            }
+        </script>
+    </body>
 </html>
