@@ -1,23 +1,36 @@
 <!DOCTYPE HTML>
 <html>
     <body>
-        <button onClick="launch()">Launch</button>
-        <select id="version">
-            <option id="rd-132328">rd-132328</option>
-            <option id="rd-132211">rd-132211</option>
+        <h1>Patrick's Eaglercraft Launcher</h1>
+        <h3>Select a version</h3>
+        <select onchange="deleteButtonText()" id="version">
+            <option value="rd-160052">rd-160052 (Launcher)</option>
+            <option value="rd-132328">rd-132328 (Launcher)</option>
+            <option value="rd-132211">rd-132211 (Launcher)</option>
         </select>
-        <input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)
+        <br>
+        <h4>Options</h4>
+        <p>You can <button onClick="launch()">Launch</button> the game or <button id="delete" onclick="deleteDB()"></button>.</p>
+        <!---<input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)-->
         <script>
-            var launch = function(){
-                if(document.getElementById("wasm").checked){
-                    window.open(document.getElementById("version").value + "-WASM.html", '_blank').focus();
-                }else{
-                    window.open(document.getElementById("version").value + "-JS.html", '_blank');
-                }
+            var deleteDB = function(){
+                var DBDeleteRequest = window.indexedDB.deleteDatabase("_me_radmanplays_eaglercraft_internal_PlatformFilesystem_" + document.getElementById("version").value  + "_");
             }
+            var deleteButtonText = function(){
+                document.getElementById("delete").innerHTML = "Clear Memory for " + document.getElementById("version").value;
+            }
+            var launch = function(){
+                //if(document.getElementById("wasm").checked){
+                    window.open(document.getElementById("version").value + "-WASM.html", '_blank').focus();
+                //}else{
+                //    window.open(document.getElementById("version").value + "-JS.html", '_blank');
+                //}
+            }
+            document.onload(deleteButtonText());
         </script>
         <p>
             Attention Mojang! This website applies to moral rules. All versions beyond release 1.2.5 must be paired with a Microsoft account owning Minecraft Java Edition or be launched in Demo mode.
         </p>
+        <p>This website is made by Patrick.</p>
     </body>
 </html>
