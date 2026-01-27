@@ -3,30 +3,41 @@
     <body>
         <h1>Patrick's Eaglercraft Launcher</h1>
         <h3>Select a version</h3>
-        <select onchange="deleteButtonText()" id="version">
+        <select onchange="changed()" id="version">
+            <option value="rd-161348">rd-161348 (Launcher)</option>
             <option value="rd-160052">rd-160052 (Launcher)</option>
             <option value="rd-132328">rd-132328 (Launcher)</option>
             <option value="rd-132211">rd-132211 (Launcher)</option>
         </select>
         <br>
         <h4>Options</h4>
+        <p id="info"></p>
         <p>You can <button onClick="launch()">Launch</button> the game or <button id="delete" onclick="deleteDB()"></button>.</p>
         <!---<input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)-->
         <script>
+            var gametypes = [
+                1,
+                1,
+                1,
+                1
+            ];
+            var gametypestext = [
+                "",
+                "(Launcher) means that the original game is unavailable but you can play the modified one you find in the Minecraft launcher.",
+                "(Modified) means that the original game is unavailable but you can play a version that was found modified",
+                "This version is unavailable"
+            ];
             var deleteDB = function(){
                 var DBDeleteRequest = window.indexedDB.deleteDatabase("_me_radmanplays_eaglercraft_internal_PlatformFilesystem_" + document.getElementById("version").value  + "_");
             }
-            var deleteButtonText = function(){
+            var changed = function(){
+                //document.getElementById("info").innerHTML = document.getElementById("version").innerHTML;
                 document.getElementById("delete").innerHTML = "Clear Memory for " + document.getElementById("version").value;
             }
             var launch = function(){
-                //if(document.getElementById("wasm").checked){
-                    window.open(document.getElementById("version").value + "-WASM.html", '_blank').focus();
-                //}else{
-                //    window.open(document.getElementById("version").value + "-JS.html", '_blank');
-                //}
+                window.open("./play/" + document.getElementById("version").value);
             }
-            document.onload(deleteButtonText());
+            document.onload(changed());
         </script>
         <p>
             Attention Mojang! This website applies to moral rules. All versions beyond release 1.2.5 must be paired with a Microsoft account owning Minecraft Java Edition or be launched in Demo mode.
