@@ -4,6 +4,7 @@
         <h1>Patrick's Eaglercraft Launcher</h1>
         <h3>Select a version</h3>
         <select onchange="changed()" id="version">
+            <option value="c0.0.12a_03">Classic 0.0.12a_03</option>
             <option value="c0.0.11a">Classic 0.0.11a</option>
             <option value="rd-161348">rd-161348 (Launcher)</option>
             <option value="rd-160052">rd-160052 (Launcher)</option>
@@ -11,38 +12,63 @@
             <option value="rd-132211">rd-132211 (Launcher)</option>
         </select>
         <br>
-        <h4>Options</h4>
-        <p id="info"></p>
-        <p>You can <button onClick="launch()">Launch</button> the game or <button id="delete" onclick="deleteDB()"></button>.</p>
+        <h4>Options</h4><p id="info"></p><div id="multiplayer"></div>
+        <br><button onClick="launch()">Launch</button><br>
+        <button id="delete" onclick="deleteDB()"></button>
         <!---<input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)-->
         <script>
-            var gametypes = [
-                1,
-                1,
-                1,
-                1
-            ];
+            var n = "0"
+            var l = "1";
+            var m = "2";
+            var u = "3"
+            var version;
+            var gamelist = {
+                //legend game type, can do multiplayer
+                "c0.0.12a_03": [n, false],
+                "c0.0.11a": [n, false],
+                "rd-161348": [l, false],
+                "rd-160052": [l, false],
+                "rd-132328": [l, false],
+                "rd-132211": [l, false]
+            }
             var gametypestext = [
                 "",
-                "(Launcher) means that the original game is unavailable but you can play the modified one you find in the Minecraft launcher.",
-                "(Modified) means that the original game is unavailable but you can play a version that was found modified",
+                "(Launcher) means that the original game is unavailable but you can play a modified one you find in the Minecraft launcher.",
+                "(Modified) means that the original game is unavailable but you can play a version that was found modified.",
                 "This version is unavailable"
             ];
             var deleteDB = function(){
-                var DBDeleteRequest = window.indexedDB.deleteDatabase("_me_radmanplays_eaglercraft_internal_PlatformFilesystem_" + document.getElementById("version").value  + "_");
+                var DBDeleteRequest = window.indexedDB.deleteDatabase("_me_radmanplays_eaglercraft_internal_PlatformFilesystem_" + version.value  + "_");
             }
             var changed = function(){
-                //document.getElementById("info").innerHTML = document.getElementById("version").innerHTML;
-                document.getElementById("delete").innerHTML = "Clear Memory for " + document.getElementById("version").value;
+                version = document.getElementById("version");
+                document.getElementById("info").innerHTML = gametypestext[gamelist[version.value][0]];
+                if(gamelist[version.value][1]) {
+                    document.getElementById("multiplayer").innerHTML = `
+                    Username: <input id="username" value="Guest"><br>
+                    Server Address <input id="ip" value="localhost">:<input id="port" value="8000">
+                    `;
+                } else {
+                    document.getElementById("multiplayer").innerHTML = "";
+                }
+                document.getElementById("delete").innerHTML = "Clear Memory for " + version.value;
             }
             var launch = function(){
-                window.open("./play/" + document.getElementById("version").value);
+                if (gamelist[version.value][1]) {
+                    localStorage.setItem("eagUsername", document.getElementById("username").value);
+                    if(document.getElementById("ip").value == "") {
+                        localStorage.setItem("eagServer", document.getElementById("ip").value);
+                    } else {
+                        localStorage.setItem("eagServer", document.getElementById("ip").value + ":" + document.getElementById("ip").value);
+                    }
+                }
+                window.open("./play/" + version.value);
             }
-            document.onload(changed());
+            window.onload(changed());
         </script>
         <p>
             Attention Mojang! This website applies to moral rules. All versions beyond release 1.2.5 must be paired with a Microsoft account owning Minecraft Java Edition or be launched in Demo mode.
         </p>
-        <p>This website is made by Patrick.</p>
+        <p>This website is made by Patrick Yingling.</p>
     </body>
 </html>
