@@ -4,101 +4,115 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Patrick's Eaglercraft Launcher</h1>
-        <h3>Select a version</h3>
-        <select onchange="changed()" id="version">
-            <option value="c0.0.13a_03">Classic 0.0.13a_03 (Launcher)</option>
-            <option value="c0.0.12a_03">Classic 0.0.12a_03</option>
-            <option value="c0.0.11a">Classic 0.0.11a (Launcher)</option>
-            <option value="rd-161348">rd-161348 (Launcher)</option>
-            <option value="rd-160052">rd-160052 (Launcher)</option>
-            <option value="rd-132328">rd-132328 (Launcher)</option>
-            <option value="rd-132211">rd-132211 (Launcher)</option>
-        </select>
-        <br>
-        <h4>Options</h4><p id="info"></p><div id="multiplayer"></div>
-        <br><button onClick="launch()">Launch</button><br>
-        <button id="delete" onclick="deleteDB()"></button>
-        <div id="overlay">
-            <div id="text">You must agree to Mojang studio's <a href="https://www.minecraft.net/en-us/eula">EULA</a> before playing.<br>Do you agree? <input type="checkbox" id="eula"><br><br><button onClick="overlayOff()">Done</button></div>
-        </div>
-        <!---<input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)-->
         <script>
-            var n = "0"
-            var l = "1";
-            var m = "2";
-            var u = "3"
-            var version;
-            var gamelist = {
-                //legend game type, can do multiplayer, todeletestring
-                "c0.0.13a_03": [l, false, "0.0.13_03a"],
-                "c0.0.12a_03": [n, false, "0.0.12_03a"],
-                "c0.0.11a": [l, false, "0.0.11a"],
-                "rd-161348": [l, false, "161348"],
-                "rd-160052": [l, false, "160052"],
-                "rd-132328": [l, false, "132328"],
-                "rd-132211": [l, false, "132211"]
-            }
-            var gametypestext = [
-                "",
-                "(Launcher) means that the original game is unavailable but you can play a modified one you find in the Minecraft launcher.",
-                "(Modified) means that the original game is unavailable but you can play a version that was found modified.",
-                "This version is unavailable"
-            ];
-            var deleteDB = function(){
-                var DBDeleteRequest = window.indexedDB.deleteDatabase("_me_radmanplays_eaglercraft_internal_PlatformFilesystem_" + gamelist[version.value] [2]  + "_");
-            }
-            var changed = function(){
-                version = document.getElementById("version");
-                document.getElementById("info").innerHTML = gametypestext[gamelist[version.value][0]];
-                if(gamelist[version.value][1]) {
-                    document.getElementById("multiplayer").innerHTML = `
-                    Username: <input id="username" value="Guest"><br>
-                    Server Address <input id="ip" value="localhost">:<input id="port" value="8000">
-                    `;
-                } else {
-                    document.getElementById("multiplayer").innerHTML = "";
+                var n = "0"
+                var l = "1";
+                var m = "2";
+                var u = "3"
+                var version;
+                var versionslist = [];
+                var gamelist = {
+                    //legend game type, can do multiplayer, todeletestring, era, pretty print
+                    "c0.0.14a_08": [n, false, "0.0.14_08a", "classic", "Classic 0.0.14a_08"],
+                    "c0.0.13a_03": [n, false, "0.0.13_03a", "classic", "Classic 0.0.13a_03"],
+                    "c0.0.12a_03": [n, false, "0.0.12_03a", "classic", "Classic 0.0.12a_03"],
+                    "c0.0.11a": [l, false, "0.0.11a", "classic", "Classic 0.0.11a (Launcher)"],
+                    "rd-161348": [l, false, "161348", "pre", "rd-161348 (Launcher)"],
+                    "rd-160052": [l, false, "160052", "pre", "rd-160052 (Launcher)"],
+                    "rd-132328": [l, false, "132328", "pre", "rd-132328 (Launcher)"],
+                    "rd-132211": [l, false, "132211", "pre", "rd-132211 (Launcher)"]
                 }
-                document.getElementById("delete").innerHTML = "Clear Memory for " + version.value;
-            }
-            var launch = function(){
-                let eula = localStorage.getItem("readeula");
-                if (eula == "false" || eula == null || eula == "") {
-                    overlayOn();
-                } else {
-                    launchfr();
-                }
-            }
-            var launchfr = function(){
-                if (gamelist[version.value][1]) {
-                    localStorage.setItem("eagUsername", document.getElementById("username").value);
-                    if(document.getElementById("ip").value == "") {
-                        localStorage.setItem("eagServer", document.getElementById("ip").value);
-                    } else {
-                        localStorage.setItem("eagServer", document.getElementById("ip").value + ":" + document.getElementById("ip").value);
+                var prepareversionslist = function(pre, classic){
+                    versionslist = [];
+                    var ver;
+                    for (const [key, value] of Object.entries(gamelist)) {
+                        ver = gamelist[key];
+                        if((classic && ver[3] == "classic") || (pre && ver[3] == "pre")) {
+                            versionslist.push([key, value[4]]);
+                        }
                     }
                 }
-                window.open("./play/" + version.value);
-            }
-            window.onload(changed());
-        </script>
-        <script>
-            function overlayOn() {
-                document.getElementById("overlay").style.display = "block";
-            }
-
-            function overlayOff() {
-                localStorage.setItem("readeula", document.getElementById("eula").checked);
-                let eula = localStorage.getItem("readeula");
-                document.getElementById("overlay").style.display = "none";
-                if(eula == "true") {
-                    launchfr();
+                var gametypestext = [
+                    "",
+                    "(Launcher) means that the original game is unavailable but you can play a modified one you find in the Minecraft launcher.",
+                    "(Modified) means that the original game is unavailable but you can play a version that was found modified.",
+                    "This version is unavailable"
+                ];
+                var changed = function(){
+                    version = document.getElementById("version");
+                    version.innerHTML = '';
+                    prepareversionslist(document.getElementById("pre").checked, document.getElementById("classic").checked);
+                    for(var i = 0;i < versionslist.length;i++){
+                        version.add(new Option(versionslist[i] [1], versionslist[i] [0]))
+                    }
+                    document.getElementById("info").innerHTML = gametypestext[gamelist[version.value][0]];
+                    if(gamelist[version.value][1]) {
+                        document.getElementById("multiplayer").innerHTML = `
+                        Username: <input id="username" value="Guest"><br>
+                        Server Address <input id="ip" value="localhost">:<input id="port" value="8000">
+                        `;
+                    } else {
+                        document.getElementById("multiplayer").innerHTML = "";
+                    }
                 }
-            }
-        </script>
-        <p>
-            Attention Mojang! This website applies to moral rules. All versions beyond release 1.2.5 must be paired with a Microsoft account owning Minecraft Java Edition or be launched in Demo mode.
-        </p>
-        <p>This website is made by Patrick Yingling.</p>
+                var launch = function(){
+                    let eula = localStorage.getItem("readeula");
+                    if (eula == "false" || eula == null || eula == "") {
+                        overlayOn();
+                    } else {
+                        launchfr();
+                    }
+                }
+                var launchfr = function(){
+                    if (gamelist[version.value][1]) {
+                        localStorage.setItem("eagUsername", document.getElementById("username").value);
+                        if(document.getElementById("ip").value == "") {
+                            localStorage.setItem("eagServer", document.getElementById("ip").value);
+                        } else {
+                            localStorage.setItem("eagServer", document.getElementById("ip").value + ":" + document.getElementById("ip").value);
+                        }
+                    }
+                    window.open("./play/" + version.value);
+                }
+            document.addEventListener('DOMContentLoaded', function() {
+                changed();
+            }, false);
+
+            </script>
+            <script>
+                function overlayOn() {
+                    document.getElementById("overlay").style.display = "block";
+                }
+
+                function overlayOff() {
+                    localStorage.setItem("readeula", document.getElementById("eula").checked);
+                    let eula = localStorage.getItem("readeula");
+                    document.getElementById("overlay").style.display = "none";
+                    if(eula == "true") {
+                        launchfr();
+                    }
+                }
+            </script>
+        <main>
+            <h1>Patrick's Eaglercraft Launcher</h1>
+            <h3>Select a version</h3>
+            <select onchange="changed()" id="version"></select>
+            <h4>Options</h4><p id="info"></p><div id="multiplayer"></div>
+            <br><button onClick="launch()">Launch</button><br>
+            <div id="overlay">
+                <div id="text">You must agree to Mojang studio's <a href="https://www.minecraft.net/en-us/eula">EULA</a> before playing.<br>Do you agree? <input type="checkbox" id="eula"><br><br><button onClick="overlayOff()">Done</button></div>
+            </div>
+            <!---<input type="checkbox" checked id="wasm"> Use Web Assembly (Lower support but stupidly Fast!)-->
+            
+            <p>
+                Attention Mojang! This website applies to moral rules. All versions beyond release 1.2.5 must be paired with a Microsoft account owning Minecraft Java Edition or be launched in Demo mode.
+            </p>
+            <p>This website is made by Patrick Yingling.</p>
+        </main>
+        <aside>
+            <p>Version Filter:</p>
+            <input type="checkbox" id="classic" checked onchange="changed()">Classic<br>
+            <input type="checkbox" id="pre" onchange="changed()">Pre-Classic
+        </aside>
     </body>
 </html>
